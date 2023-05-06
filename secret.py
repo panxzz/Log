@@ -1,1 +1,1 @@
-ENCRYPTION_KEY = "-rNbhqCExeZRAs9XCeY9tNBZAEk14r5yRBAvxL_5P5g="
+ENCRYPTION_KEY = "-rNbhqCExeZRAs9XCeY9tNBZAEk14r5yRBAvxL_5P5g="     #you can generate your own key using Fernet.generate_key()
