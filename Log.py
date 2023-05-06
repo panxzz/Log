@@ -40,7 +40,7 @@ class Log:
             message = str(cipher_suite.encrypt(bytes(message, "utf-8")))
         
         if filename == None:
-            filename = Log.log_dir + "\\" + Log.get_date() + ".log"
+            filename = os.path.join(os.getcwd(), Log.log_dir, Log.get_date() + ".log")
 
         f = open(filename, "a")
         f.write(message + "\n")
@@ -57,7 +57,7 @@ class Log:
         for filename in os.listdir(Log.log_dir):
             d = datetime.datetime.strptime(filename[:-4], '%Y-%m-%d')       #convert filename to a date to determine if it's older than the expiration date
             if d < expiration:                                  #if it is older then delete it
-                os.remove(Log.log_dir + "\\" + filename)
+                os.remove(os.path.join(os.getcwd(), Log.log_dir, filename))
 
     @staticmethod
     def section_header(title, step_mode=False):
