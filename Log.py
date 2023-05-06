@@ -55,7 +55,7 @@ class Log:
 
         #open log directory and for each file in there, 
         for filename in os.listdir(Log.log_dir):
-            d = datetime.datetime.strptime(filename[:-4], '%Y-%m-%d')       #convert filename to a date to determine if it's older than the expiration date
+            d = datetime.datetime.strptime(os.path.splitext(os.path.basename(filename))[0], '%Y-%m-%d')       #convert filename to a date to determine if it's older than the expiration date
             if d < expiration:                                  #if it is older then delete it
                 os.remove(os.path.join(os.getcwd(), Log.log_dir, filename))
 
