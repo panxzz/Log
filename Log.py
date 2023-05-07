@@ -104,7 +104,6 @@ class Log:
     def error(message):
         global now
         now = Log.get_timestamp()
-        day = Log.get_date()
 
         print(Log.text_gray_on_black + now + Log.text_red_on_black + " " + message)
 
