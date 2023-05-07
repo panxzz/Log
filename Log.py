@@ -13,17 +13,17 @@ class Log:
     text_white_on_black = "\033[1;37;40m"
     enable_file_output = True       #set to True to record log output to a file
     log_dir = "log"                 #the name of the directory to store log files to
-    encrypt_file = True             #if True then all data saved to the log is encrypted
+    encrypt_file = False             #if True then all data saved to the log is encrypted
     log_expiration_days = 30        #after this many days, old log files will be deleted
 
     @staticmethod
     def get_timestamp():
         return str(datetime.datetime.now()).replace(":", "-")
-    
+
     @staticmethod
     def get_date():
         return str(datetime.datetime.today().strftime('%Y-%m-%d'))
-    
+
     @staticmethod
     def write_to_file(message, type=None, filename=None):
         message = Log.remove_colors(message)
@@ -38,9 +38,16 @@ class Log:
         if Log.encrypt_file:
             cipher_suite = Fernet(secret.ENCRYPTION_KEY)
             message = str(cipher_suite.encrypt(bytes(message, "utf-8")))
-        
-        if filename == None:
-            filename = os.path.join(os.getcwd(), Log.log_dir, Log.get_date() + ".log")
+
+        if filename == None:        #default path is whatever log_dir plus today's date
+            filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), Log.log_dir)
+
+            if not os.path.exists(filename):
+                os.makedirs(filename)
+
+            filename = os.path.join(filename, Log.get_date() + ".log")
+        else:       #user defined their own filepath to write to
+            filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), filename)
 
         f = open(filename, "a")
         f.write(message + "\n")
@@ -53,17 +60,17 @@ class Log:
         #calculate the expiration date (today minus log_expiration_days)
         expiration = datetime.datetime.today() - datetime.timedelta(days=Log.log_expiration_days)
 
-        #open log directory and for each file in there, 
-        for filename in os.listdir(Log.log_dir):
+        #open log directory and for each file in there,
+        for filename in os.listdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), Log.log_dir)):
             d = datetime.datetime.strptime(os.path.splitext(os.path.basename(filename))[0], '%Y-%m-%d')       #convert filename to a date to determine if it's older than the expiration date
             if d < expiration:                                  #if it is older then delete it
-                os.remove(os.path.join(os.getcwd(), Log.log_dir, filename))
+                os.remove(os.path.join(os.path.dirname(os.path.realpath(__file__)), Log.log_dir, filename))
 
     @staticmethod
     def section_header(title, step_mode=False):
         global now
         now = Log.get_timestamp()
-        
+
         print(Log.text_blue_on_black + title + "\n")
 
         if Log.enable_file_output:
